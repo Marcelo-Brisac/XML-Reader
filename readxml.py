@@ -7,17 +7,17 @@ def get_frame(xp):
         x = pd.read_xml(f1, xpath=xp)
         x["fundo"]=["Macauba" for _ in range(len(x.index))]
     except:
-        x = None
+        x = pd.DataFrame()
     
     try:
         y = pd.read_xml(f2, xpath=xp)
         y["fundo"]=["Ebano" for _ in range(len(y.index))]
     except:
-         y=None
+         y=pd.DataFrame()
 
-    if y is None:
+    if y.empty is True:
         return x 
-    elif x is None:
+    elif x.empty is True:
         return y
     else:
         return pd.concat([x,y],ignore_index=True, axis=0)
@@ -28,19 +28,19 @@ acoes =             get_frame("//arquivoposicao_4_01/fundo/acoes")
 caixa =             get_frame("//arquivoposicao_4_01/fundo/caixa")
 cotas =             get_frame("//arquivoposicao_4_01/fundo/cotas")
 provisao =          get_frame("//arquivoposicao_4_01/fundo/provisao")
-outrasdespesas =   get_frame("//arquivoposicao_4_01/fundo/outrasdespesas")
+outrasdespesas =    get_frame("//arquivoposicao_4_01/fundo/outrasdespesas")
 
-p1 = tit_publico[["isin","valorfindisp","puposicao","qtdisponivel","fundo"]].copy()
-p2 = debentures[["isin","valorfindisp","puposicao","qtdisponivel","fundo"]].copy()
-p3 = acoes[["codativo","valorfindisp","puposicao","qtdisponivel", "fundo"]].copy()
+p1 = tit_publico[["isin","valorfindisp","puposicao","qtdisponivel","fundo"]].copy() if tit_publico.empty is False else pd.DataFrame(columns=["isin","valorfindisp","puposicao","qtdisponivel","fundo"])
+p2 = debentures[["isin","valorfindisp","puposicao","qtdisponivel","fundo"]].copy() if debentures.empty is False else pd.DataFrame(columns=["isin","valorfindisp","puposicao","qtdisponivel","fundo"])
+p3 = acoes[["codativo","valorfindisp","puposicao","qtdisponivel", "fundo"]].copy() if acoes.empty is False else pd.DataFrame(columns=["codativo","valorfindisp","puposicao","qtdisponivel", "fundo"])
 
 caixa["valorfindisp"]=caixa["saldo"]
 caixa["puposicao"]=caixa["saldo"]
 caixa["qtdisponivel"] = [1 for _ in caixa.index]
-p4 = caixa[["isininstituicao","valorfindisp","puposicao","qtdisponivel","fundo"]]
+p4 = caixa[["isininstituicao","valorfindisp","puposicao","qtdisponivel","fundo"]].copy() if caixa.empty is False else pd.DataFrame(columns=["isininstituicao","valorfindisp","puposicao","qtdisponivel","fundo"])
 
 cotas["valorfindisp"]=cotas["puposicao"]*cotas["qtdisponivel"]
-p5=cotas[["cnpjfundo","valorfindisp","puposicao","qtdisponivel","fundo"]].copy()
+p5=cotas[["cnpjfundo","valorfindisp","puposicao","qtdisponivel","fundo"]].copy() if cotas.empty is False else pd.DataFrame(columns=["cnpjfundo","valorfindisp","puposicao","qtdisponivel","fundo"])
 
 p1.columns=["ID","Valor","Preco","Qtt","Fundo"]
 p2.columns=["ID","Valor","Preco","Qtt","Fundo"]
